@@ -1,0 +1,244 @@
+basePath: /
+definitions:
+  model.User:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      phone_number:
+        type: string
+      raiting:
+        type: number
+    type: object
+  service.UserSingIn:
+    properties:
+      password:
+        type: string
+      phone_number:
+        type: string
+    required:
+    - password
+    - phone_number
+    type: object
+  service.UserSingUp:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      phone_number:
+        type: string
+    required:
+    - email
+    - name
+    - password
+    - phone_number
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: ripper@gmail.com
+    name: API Support
+  description: API for order taxi
+  termsOfService: http://swagger.io/terms/
+  title: InnoTaxi API
+  version: "1.0"
+paths:
+  /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: user's id to delete
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: 'error: err'
+          schema: {}
+        "403":
+          description: 'error: err'
+          schema: {}
+        "500":
+          description: 'error: err'
+          schema: {}
+      security:
+      - Bearer: []
+      summary: delete user
+      tags:
+      - user
+  /users/auth/logout:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 'access_token: token'
+        in: body
+        name: access_token
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: 'error: err'
+          schema: {}
+        "403":
+          description: 'error: err'
+          schema: {}
+        "500":
+          description: 'error: err'
+          schema: {}
+      security:
+      - Bearer: []
+      summary: logout user
+      tags:
+      - auth
+  /users/auth/refresh:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'accept token: token'
+          schema:
+            type: string
+        "401":
+          description: 'error: err'
+          schema: {}
+        "403":
+          description: 'error: err'
+          schema: {}
+        "500":
+          description: 'error: err'
+          schema: {}
+      summary: refresh access token
+      tags:
+      - auth
+  /users/auth/sing-in:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: phone number and password
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/service.UserSingIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'access_token: token'
+          schema:
+            type: string
+        "403":
+          description: 'error: err'
+          schema: {}
+        "500":
+          description: 'error: err'
+          schema: {}
+      summary: user authentication
+      tags:
+      - auth
+  /users/auth/sing-up:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: account info
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/service.UserSingUp'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: 'error: err'
+          schema: {}
+        "500":
+          description: 'error: err'
+          schema: {}
+      summary: registrate user
+      tags:
+      - auth
+  /users/profile/{id}:
+    get:
+      parameters:
+      - description: user's id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+        "401":
+          description: 'error: err'
+          schema: {}
+        "403":
+          description: 'error: err'
+          schema: {}
+        "500":
+          description: 'error: err'
+          schema: {}
+      security:
+      - Bearer: []
+      summary: get user profile
+      tags:
+      - user
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: rows to update
+        in: body
+        name: input
+        schema:
+          $ref: '#/definitions/model.User'
+      - description: user's id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+        "401":
+          description: 'error: err'
+          schema: {}
+        "403":
+          description: 'error: err'
+          schema: {}
+        "500":
+          description: 'error: err'
+          schema: {}
+      security:
+      - Bearer: []
+      summary: update user profile
+      tags:
+      - user
+securityDefinitions:
+  Bearer:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
