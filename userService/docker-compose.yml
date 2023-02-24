@@ -1,0 +1,46 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: 'innotaxi'
+      POSTGRES_USER: 'ripper'
+      POSTGRES_PASSWORD: '150403'
+    volumes:
+      - .:/data/postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ripper -d innotaxi"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+  redis:
+    image: redis:latest
+    command: >
+          --requirepass 150403va
+    volumes:
+      - .:/data/redis
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+    ports:
+      - "6379:6379"
+  mongo:
+    image: mongo:latest
+    environment:
+      - MONGO_INITDB_DATABASE=test
+      - MONGO_INITDB_ROOT_USERNAME=ripper
+      - MONGO_INITDB_ROOT_PASSWORD=150403va
+    volumes:
+      - .:/data/mongo
+    ports:
+      - "27017:27017"
+  inno-taxi-user:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy

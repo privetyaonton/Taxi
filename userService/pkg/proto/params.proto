@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option go_package = "pkg/proto";
+
+message Params{
+    uint64 UserID  = 1;
+    string DriverID  = 2;
+    string Type  = 3;
+}
+
+message Response {
+    string AccessToken = 1;
+    string RefreshToken = 2;
+}
+
+service AuthService{
+    rpc GetJWT(Params) returns (Response) {}
+}
